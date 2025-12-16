@@ -1,157 +1,89 @@
-# 🌾 BioTech Feeding - Gestión de Alimentación
+# 🌾 BioTech Feeding Microfrontend
 
-Módulo de planificación y control de alimentación animal.
+<div align="center">
 
-## 🚀 Características
+  <img src="https://biotech-shell.vercel.app/BioTech.webp" alt="BioTech Logo" width="200" />
+  
+  ![Feeding Banner](https://capsule-render.vercel.app/api?type=waving&color=f59e0b&height=120&section=header&text=Feeding%20Manager&fontSize=70&animation=fadeIn&fontAlignY=40)
 
-- **Horarios de alimentación**: Programación por tiempos
-- **Planes nutricionales**: Por tipo de animal
-- **Control de raciones**: Cantidades y tipos de alimento
-- **Registro de consumo**: Tracking diario
-- **Alertas**: Notificaciones de horarios
-- **Reportes**: Consumo por animal/grupo
-- **Gestión de inventario**: Stock de alimentos
+  <br />
 
-## 🛠️ Tecnologías
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-- React 18
-- Vite + Module Federation
-- React Hook Form + Yup
-- Axios
-- Zustand
-- Tailwind CSS
+  <br />
 
-## 📦 Instalación
+  <a href="https://biotech-shell.vercel.app/">
+    <img src="https://img.shields.io/badge/🚀_Live_App-Access_Platform-f59e0b?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
+  <a href="https://github.com/Nikotastic/BioTech-Backend">
+    <img src="https://img.shields.io/badge/🔗_Backend_Repo-View_Code-22c55e?style=for-the-badge&logo=github&logoColor=white" alt="Backend Repo" />
+  </a>
 
-```bash
-npm install
-npm run dev  # Puerto 5003
-```
+</div>
 
-## 🔌 Componentes Expuestos
+<br />
 
-```javascript
-// Horario de alimentación
-import('feedingMF/FeedingSchedule')
+## 📋 Overview
 
-// Plan de alimentación
-import('feedingMF/FeedingPlan')
+The **Feeding Microfrontend** ensures optimal herd nutrition. Integrated into the [Shell Application](https://biotech-shell.vercel.app/), it allows farmers to define diet plans, schedule feedings, and track resource consumption.
 
-// Store
-import('feedingMF/FeedingStore')
-```
+---
 
-## 📁 Estructura
+## ✨ Features
 
-```
-src/
-├── features/
-│   ├── feeding-schedule/
-│   │   ├── components/
-│   │   │   └── FeedingSchedule.jsx
-│   │   ├── hooks/
-│   │   └── services/
-│   └── feeding-plan/
-│       ├── components/
-│       │   └── FeedingPlan.jsx
-│       ├── validations/
-│       └── services/
-├── shared/
-│   ├── store/
-│   │   └── feedingStore.js
-│   ├── constants/
-│   │   └── feedTypes.js
-│   └── utils/
-└── App.jsx
-```
+- **📅 Scheduler**: Visual calendar for feeding times.
+- **🥗 Diet Plans**: Create custom feed mixes and rations.
+- **🔔 Notifications**: Alerts for feeding tasks (integrated with Shell).
+- **📉 Consumption Tracking**: Link with Inventory to deduct stock.
 
-## 🥗 Tipos de Alimento
+---
 
-```javascript
-export const FEED_TYPES = {
-  CONCENTRATE: 'Concentrado',
-  FORAGE: 'Forraje',
-  SILAGE: 'Ensilaje',
-  SUPPLEMENT: 'Suplemento',
-  MINERAL: 'Mineral'
-}
+## 🛠️ Tech Stack
 
-export const MEAL_TIMES = {
-  MORNING: 'Mañana',
-  NOON: 'Mediodía',
-  AFTERNOON: 'Tarde',
-  NIGHT: 'Noche'
-}
-```
+- **Framework**: React 19
+- **Build Tool**: Vite
+- **Styling**: TailwindCSS
+- **State**: Zustand
 
-## 🌍 API Endpoints
+---
 
-```javascript
-GET    /api/feeding/schedule       // Horarios
-POST   /api/feeding/schedule       // Crear horario
-GET    /api/feeding/plans          // Planes
-POST   /api/feeding/plans          // Crear plan
-GET    /api/feeding/consumption    // Consumo
-POST   /api/feeding/record         // Registrar comida
-```
+## 🚀 Getting Started
 
-## 📝 Plan de Alimentación
+1.  **Clone & Install**
 
-```typescript
-interface FeedingPlan {
-  id: number
-  name: string
-  animalType: string
-  description: string
-  meals: [
-    {
-      time: string
-      feedType: string
-      quantity: number
-      unit: string
-    }
-  ]
-  nutritionalInfo: {
-    protein: number
-    energy: number
-    fiber: number
-  }
-}
-```
+    ```bash
+    git clone https://github.com/Nikotastic/biotech-feeding-mf.git
+    npm install
+    ```
 
-## ⏰ Horarios
+2.  **Run Locally**
+    ```bash
+    npm run dev
+    ```
+    Running on: `http://localhost:5003`
 
-- **Mañana**: 06:00 AM
-- **Mediodía**: 12:00 PM
-- **Tarde**: 06:00 PM
-- **Noche**: 10:00 PM
+---
 
-## 📊 Reportes
+## 🤝 Contributing & Credits
 
-- Consumo diario por animal
-- Consumo mensual por tipo
-- Costos de alimentación
-- Eficiencia alimenticia
-- Stock de alimentos
+<div align="center">
 
-## 🔔 Notificaciones
+**Core Architecture & Development**<br>
+Built with ❤️ by [**@Nikotastic**](https://github.com/Nikotastic)
 
-```javascript
-// Alertas programadas
-- 30 min antes del horario
-- Stock bajo de alimento
-- Cambio de plan nutricional
-```
+  <br>
 
-## 🚀 Deploy
+**UX/UI Design & Creative Direction**<br>
+Special thanks to [**@J2rkan**](https://github.com/J2rkan) for the premium design contributions.
 
-```bash
-npm run build
-vercel --prod
-```
+</div>
 
-## 📞 Contacto
+<br>
 
-- Email: feeding@biotech.com
-- Docs: https://docs.biotech.com/feeding
-```
+---
+
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=f59e0b&height=100&section=footer" width="100%" />
+</div>
