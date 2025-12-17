@@ -5,14 +5,12 @@ import { FeedingEventsList } from "./features/feeding-events/components/FeedingE
 import { Layout } from "./layout/components/Layout";
 import { motion, AnimatePresence } from "motion/react";
 import { LayoutGrid, Calendar, ClipboardList } from "lucide-react";
-import { ToastContainer } from "./shared/components/ui/ToastContainer";
 
 function App() {
   const [activeTab, setActiveTab] = useState("records"); // Default to records as it's the real feature
 
   return (
     <Layout>
-      <ToastContainer />
       <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 font-sans text-gray-900">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Navigation Tabs */}
