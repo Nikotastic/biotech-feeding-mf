@@ -12,6 +12,17 @@ export const feedingService = {
     }
   },
 
+  // GET /api/v1/FeedingEvents/{id} - Get feeding event by ID
+  getEventById: async (id) => {
+    try {
+      const response = await apiClient.get(`/v1/FeedingEvents/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching feeding event ${id}:`, error);
+      throw error;
+    }
+  },
+
   // Get feeding events by Farm ID
   getEventsByFarm: async (farmId) => {
     try {
