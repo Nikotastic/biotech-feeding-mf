@@ -2,12 +2,11 @@ import { useForm } from "react-hook-form";
 import { motion } from "motion/react";
 import { Save, X, Info } from "lucide-react";
 import { useFeedingStore } from "../../../shared/store/feedingStore";
-import { useToastStore } from "../../../shared/store/toastStore";
+import alertService from "../../../shared/utils/alertService";
 
 export function FeedingPlanForm({ planToEdit, onCancel, onSave }) {
   const addPlan = useFeedingStore((state) => state.addPlan);
   const updatePlan = useFeedingStore((state) => state.updatePlan);
-  const addToast = useToastStore((state) => state.addToast);
 
   const {
     register,
@@ -36,10 +35,10 @@ export function FeedingPlanForm({ planToEdit, onCancel, onSave }) {
 
     if (planToEdit) {
       updatePlan({ ...planToEdit, ...formattedData });
-      addToast("Plan actualizado correctamente", "success");
+      alertService.success("Plan actualizado correctamente", "Éxito");
     } else {
       addPlan({ ...formattedData, id: Date.now().toString() });
-      addToast("Plan creado correctamente", "success");
+      alertService.success("Plan creado correctamente", "Éxito");
     }
     onSave();
   };

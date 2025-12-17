@@ -2,14 +2,13 @@ import { useState } from "react";
 import { Search, Plus, Utensils, Edit2, Trash2, Eye, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useFeedingStore } from "../../../shared/store/feedingStore";
-import { useToastStore } from "../../../shared/store/toastStore";
+import alertService from "../../../shared/utils/alertService";
 import { FeedingPlanForm } from "./FeedingPlanForm";
 import { FeedingPlanDetail } from "./FeedingPlanDetail";
 
 export function FeedingPlans() {
   const plans = useFeedingStore((state) => state.plans);
   const deletePlan = useFeedingStore((state) => state.deletePlan);
-  const addToast = useToastStore((state) => state.addToast);
 
   const [viewMode, setViewMode] = useState("list"); // 'list', 'create', 'edit', 'view'
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -55,7 +54,10 @@ export function FeedingPlans() {
   const handleDelete = (id) => {
     deletePlan(id);
     setDeleteConfirm(null);
-    addToast("Plan de alimentación eliminado correctamente", "success");
+    alertService.success(
+      "Plan de alimentación eliminado correctamente",
+      "Éxito"
+    );
   };
 
   const handleBack = () => {

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useFeedingEvents } from "../hooks/useFeedingEvents";
 import { FeedingEventForm } from "./FeedingEventForm";
 import { feedingEventsService } from "../services/feedingEventsService";
-import { useToastStore } from "../../../shared/store/toastStore";
+import alertService from "../../../shared/utils/alertService";
 
 export function FeedingEventsList() {
   const [viewMode, setViewMode] = useState("list");
@@ -24,7 +24,6 @@ export function FeedingEventsList() {
   }
 
   const { events, loading, error, refetch } = useFeedingEvents(farmId);
-  const addToast = useToastStore((state) => state.addToast);
 
   const filteredEvents =
     events?.filter(
@@ -36,17 +35,23 @@ export function FeedingEventsList() {
   const handleCreateSuccess = () => {
     setViewMode("list");
     refetch();
-    addToast("✅ Registro de alimentación creado con éxito", "success");
+    alertService.success("Registro de alimentación creado con éxito", "Éxito");
   };
 
   const handleCancelEvent = async (id) => {
-    if (!window.confirm("¿Estás seguro de cancelar este evento?")) return;
+    const result = await alertService.confirm(
+      "¿Estás seguro de cancelar este evento?",
+      "Confirmar Cancelación",
+      "Sí, cancelar",
+      "No"
+    );
+    if (!result.isConfirmed) return;
     try {
       await feedingEventsService.cancelEvent(id);
-      addToast("Evento cancelado", "success");
+      alertService.success("Evento cancelado", "Éxito");
       refetch();
     } catch (e) {
-      addToast("Error al cancelar evento", "error");
+      alertService.error("Error al cancelar evento", "Error");
     }
   };
 
