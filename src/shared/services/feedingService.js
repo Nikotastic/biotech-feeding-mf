@@ -1,10 +1,10 @@
-import apiService from "@shared-services/ApiService";
+import apiClient from "../utils/apiClient";
 
 export const feedingService = {
   // Create a new feeding event (Record feeding)
   createFeedingEvent: async (eventData) => {
     try {
-      const response = await apiService.post("/v1/FeedingEvents", eventData);
+      const response = await apiClient.post("/v1/FeedingEvents", eventData);
       return response.data;
     } catch (error) {
       console.error("Error creating feeding event:", error);
@@ -15,7 +15,7 @@ export const feedingService = {
   // GET /api/v1/FeedingEvents/{id} - Get feeding event by ID
   getEventById: async (id) => {
     try {
-      const response = await apiService.get(`/v1/FeedingEvents/${id}`);
+      const response = await apiClient.get(`/v1/FeedingEvents/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching feeding event ${id}:`, error);
@@ -26,7 +26,7 @@ export const feedingService = {
   // Get feeding events by Farm ID
   getEventsByFarm: async (farmId) => {
     try {
-      const response = await apiService.get(`/v1/FeedingEvents/farm/${farmId}`);
+      const response = await apiClient.get(`/v1/FeedingEvents/farm/${farmId}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching feeding events for farm ${farmId}:`, error);
@@ -37,7 +37,7 @@ export const feedingService = {
   // Get feeding events by Batch ID
   getEventsByBatch: async (batchId) => {
     try {
-      const response = await apiService.get(
+      const response = await apiClient.get(
         `/v1/FeedingEvents/batch/${batchId}`
       );
       return response.data;
@@ -53,7 +53,7 @@ export const feedingService = {
   // Get feeding events by Product ID
   getEventsByProduct: async (productId) => {
     try {
-      const response = await apiService.get(
+      const response = await apiClient.get(
         `/v1/FeedingEvents/product/${productId}`
       );
       return response.data;
@@ -69,7 +69,7 @@ export const feedingService = {
   // Get feeding events by Animal ID
   getEventsByAnimal: async (animalId) => {
     try {
-      const response = await apiService.get(
+      const response = await apiClient.get(
         `/v1/FeedingEvents/animal/${animalId}`
       );
       return response.data;
@@ -85,7 +85,7 @@ export const feedingService = {
   // Recalculate total costs
   recalculateCost: async (data) => {
     try {
-      const response = await apiService.post(
+      const response = await apiClient.post(
         "/v1/FeedingEvents/recalculate-cost",
         data
       );
@@ -99,7 +99,7 @@ export const feedingService = {
   // Cancel (soft delete) a feeding event
   cancelEvent: async (id) => {
     try {
-      const response = await apiService.put(`/v1/FeedingEvents/${id}/cancel`);
+      const response = await apiClient.put(`/v1/FeedingEvents/${id}/cancel`);
       return response.data;
     } catch (error) {
       console.error(`Error cancelling feeding event ${id}:`, error);

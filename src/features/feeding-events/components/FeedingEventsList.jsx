@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Plus, Calendar, Search, Trash2, RefreshCw } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useFeedingEvents } from "../hooks/useFeedingEvents";
 import { FeedingEventForm } from "./FeedingEventForm";
 import { feedingEventsService } from "../services/feedingEventsService";

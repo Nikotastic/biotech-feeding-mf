@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Search, Plus, Utensils, Edit2, Trash2, Eye, X } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useFeedingStore } from "../../../shared/store/feedingStore";
 import alertService from "../../../shared/utils/alertService";
 import { FeedingPlanForm } from "./FeedingPlanForm";

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Save, X, Info } from "lucide-react";
 import { useFeedingStore } from "../../../shared/store/feedingStore";
 import alertService from "../../../shared/utils/alertService";

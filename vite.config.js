@@ -36,12 +36,13 @@ export default defineConfig({
           "./src/features/feeding-events/components/FeedingEventsList.jsx",
         "./FeedingStore": "./src/shared/store/feedingStore.js",
       },
-      shared: ["react", "react-dom", "react-router-dom", "zustand", "axios"],
+      shared: ["react", "react-dom", "react-router-dom", "zustand", "axios", "framer-motion"],
     }),
   ],
   build: {
     target: "esnext",
     minify: false,
     cssCodeSplit: false,
+    modulePreload: false,
   },
 });
