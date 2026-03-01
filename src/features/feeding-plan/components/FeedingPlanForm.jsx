@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Save, X, Info } from "lucide-react";
-import { useFeedingStore } from "../../../shared/store/feedingStore";
-import alertService from "../../../shared/utils/alertService";
+import { useFeedingStore } from "@shared/store/feedingStore";
+import alertService from "@shared/utils/alertService";
 
 export function FeedingPlanForm({ planToEdit, onCancel, onSave }) {
   const addPlan = useFeedingStore((state) => state.addPlan);

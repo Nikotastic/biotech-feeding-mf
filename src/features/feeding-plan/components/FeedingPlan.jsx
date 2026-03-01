@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Search, Plus, Utensils, Edit2, Trash2, Eye, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useFeedingStore } from "../../../shared/store/feedingStore";
-import alertService from "../../../shared/utils/alertService";
+import { useFeedingStore } from "@shared/store/feedingStore";
+import alertService from "@shared/utils/alertService";
 import { FeedingPlanForm } from "./FeedingPlanForm";
 import { FeedingPlanDetail } from "./FeedingPlanDetail";
 
@@ -19,7 +19,7 @@ export function FeedingPlans() {
   const filteredPlans = plans.filter(
     (plan) =>
       plan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.animalType.toLowerCase().includes(searchTerm.toLowerCase())
+      plan.animalType.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const getTypeColor = (type) => {
@@ -56,7 +56,7 @@ export function FeedingPlans() {
     setDeleteConfirm(null);
     alertService.success(
       "Plan de alimentación eliminado correctamente",
-      "Éxito"
+      "Éxito",
     );
   };
 
@@ -152,7 +152,7 @@ export function FeedingPlans() {
             e.currentTarget.parentElement.classList.add(
               "bg-gradient-to-r",
               "from-farm-green-800",
-              "to-farm-green-600"
+              "to-farm-green-600",
             );
           }}
         />
@@ -243,7 +243,7 @@ export function FeedingPlans() {
                   </p>
                   <span
                     className={`px-2 py-0.5 text-sm font-bold rounded-md ${getTypeColor(
-                      plan.animalType
+                      plan.animalType,
                     )} bg-opacity-0 p-0`}
                   >
                     {plan.animalType}

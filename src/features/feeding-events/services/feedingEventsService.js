@@ -1,4 +1,4 @@
-import { feedingService } from "../../../shared/services/feedingService";
+import { feedingService } from "@shared/services/feedingService";
 
 export const feedingEventsService = {
   getEventsByFarm: async (farmId) => {
