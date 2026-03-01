@@ -1,40 +1,34 @@
-import React, { useState } from "react";
-import { Plus, Calendar, Search, Trash2, RefreshCw } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useFeedingEvents } from "../hooks/useFeedingEvents";
+import React, { useState, useEffect } from "react";
+import { Plus, Calendar, Search, Trash2 } from "lucide-react";
+import alertService from "@shared/utils/alertService";
+import { useAuthStore } from "@shared/store/authStore";
+import { useFeedingStore } from "@shared/store/feedingStore";
 import { FeedingEventForm } from "./FeedingEventForm";
-import { feedingEventsService } from "../services/feedingEventsService";
-import alertService from "../../../shared/utils/alertService";
 
 export function FeedingEventsList() {
   const [viewMode, setViewMode] = useState("list");
   const [searchTerm, setSearchTerm] = useState("");
-  // IMPORTANT: We need a way to get the current Farm ID.
-  // For now, I'll hardcode or try to read from localStorage just like HealthService did.
-  // Ideally this comes from a shared Auth Context/Store exposed via Module Federation.
-  const authStorage = localStorage.getItem("auth-storage");
-  let farmId = null;
-  if (authStorage) {
-    try {
-      const parsed = JSON.parse(authStorage);
-      farmId = parsed?.state?.selectedFarm?.id;
-    } catch (e) {
-      console.error("Error parsing auth storage", e);
-    }
-  }
 
-  const { events, loading, error, refetch } = useFeedingEvents(farmId);
+  const farmId = useAuthStore((s) => s.selectedFarm?.id);
+  const events = useFeedingStore((s) => s.events);
+  const loading = useFeedingStore((s) => s.loading);
+  const error = useFeedingStore((s) => s.error);
+  const fetchEventsByFarm = useFeedingStore((s) => s.fetchEventsByFarm);
+  const cancelEventInStore = useFeedingStore((s) => s.cancelEvent);
 
-  const filteredEvents =
-    events?.filter(
-      (e) =>
-        e.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        e.animalName?.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
+  useEffect(() => {
+    fetchEventsByFarm(farmId);
+  }, [farmId]);
+
+  const filteredEvents = (events ?? []).filter(
+    (e) =>
+      e.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      e.animalName?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   const handleCreateSuccess = () => {
     setViewMode("list");
-    refetch();
+    fetchEventsByFarm(farmId);
     alertService.success("Registro de alimentación creado con éxito", "Éxito");
   };
 
@@ -43,14 +37,13 @@ export function FeedingEventsList() {
       "¿Estás seguro de cancelar este evento?",
       "Confirmar Cancelación",
       "Sí, cancelar",
-      "No"
+      "No",
     );
     if (!result.isConfirmed) return;
     try {
-      await feedingEventsService.cancelEvent(id);
+      await cancelEventInStore(id, farmId);
       alertService.success("Evento cancelado", "Éxito");
-      refetch();
-    } catch (e) {
+    } catch {
       alertService.error("Error al cancelar evento", "Error");
     }
   };
@@ -72,6 +65,8 @@ export function FeedingEventsList() {
       </div>
     );
   }
+
+  const refetch = () => fetchEventsByFarm(farmId);
 
   return (
     <div className="space-y-6">
