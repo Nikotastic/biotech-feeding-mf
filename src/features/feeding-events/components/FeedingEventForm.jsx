@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Save, X } from "lucide-react";
 import { feedingEventsService } from "../services/feedingEventsService";
-import alertService from "../../../shared/utils/alertService";
+import alertService from "@shared/utils/alertService";
 
 export function FeedingEventForm({ farmId, onCancel, onSuccess }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +43,7 @@ export function FeedingEventForm({ farmId, onCancel, onSuccess }) {
       console.error(error);
       alertService.error(
         "Error al crear el evento. Verifica los datos.",
-        "Error"
+        "Error",
       );
     } finally {
       setIsSubmitting(false);

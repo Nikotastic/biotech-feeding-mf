@@ -8,7 +8,7 @@ import {
   ChevronRight,
   Activity,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 
 export function FeedingSchedule() {
   const [selectedDate, setSelectedDate] = useState(new Date());

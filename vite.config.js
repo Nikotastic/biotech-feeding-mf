@@ -8,11 +8,8 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "@shared": path.resolve(__dirname, "./src/shared"),
-      // Alias to access shared services from Shell
-      "@shared-services": path.resolve(
-        __dirname,
-        "../biotech-shell/src/shared/services"
-      ),
+      "@features": path.resolve(__dirname, "./src/features"),
+      "@layout": path.resolve(__dirname, "./src/layout"),
     },
   },
   server: {
@@ -36,12 +33,21 @@ export default defineConfig({
           "./src/features/feeding-events/components/FeedingEventsList.jsx",
         "./FeedingStore": "./src/shared/store/feedingStore.js",
       },
-      shared: ["react", "react-dom", "react-router-dom", "zustand", "axios"],
+      shared: {
+        react: { singleton: true, requiredVersion: "^19.0.0" },
+        "react-dom": { singleton: true, requiredVersion: "^19.0.0" },
+        "react-router-dom": { singleton: true },
+        zustand: { singleton: true },
+        axios: { singleton: true },
+        "framer-motion": { singleton: true },
+        "lucide-react": { singleton: true },
+      },
     }),
   ],
   build: {
     target: "esnext",
     minify: false,
     cssCodeSplit: false,
+    modulePreload: false,
   },
 });

@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { ArrowLeft, Edit2, Calendar, DollarSign, Activity } from "lucide-react";
 
 export function FeedingPlanDetail({ plan, onBack, onEdit }) {

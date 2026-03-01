@@ -3,7 +3,7 @@ import { FeedingPlans } from "./features/feeding-plan/components/FeedingPlan";
 import { FeedingSchedule } from "./features/feeding-schedule/components/FeedingSchedule";
 import { FeedingEventsList } from "./features/feeding-events/components/FeedingEventsList";
 import { Layout } from "./layout/components/Layout";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { LayoutGrid, Calendar, ClipboardList } from "lucide-react";
 
 function App() {
