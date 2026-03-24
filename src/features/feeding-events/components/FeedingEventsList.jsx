@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Calendar, Search, Trash2 } from "lucide-react";
+import { Plus, Calendar, Search, Trash2, Wheat } from "lucide-react";
 import alertService from "@shared/utils/alertService";
 import { useAuthStore } from "@shared/store/authStore";
 import { useFeedingStore } from "@shared/store/feedingStore";
 import { FeedingEventForm } from "./FeedingEventForm";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function FeedingEventsList() {
   const [viewMode, setViewMode] = useState("list");
@@ -70,34 +71,78 @@ export function FeedingEventsList() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-farm-green-100">
-        <div>
-          <h2 className="text-2xl font-bold text-farm-green-900">
-            Historial de Alimentación
-          </h2>
-          <p className="text-gray-500">Registro de eventos de consumo</p>
-        </div>
-        <button
-          onClick={() => setViewMode("create")}
-          className="flex items-center gap-2 bg-farm-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-farm-green-700 transition-all shadow-lg shadow-farm-green-200"
+      {/* Header Banner */}
+      <motion.div
+        className="mb-6 md:mb-8 relative overflow-hidden rounded-2xl md:rounded-3xl group shadow-lg"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div
+          className="relative max-md:min-h-[180px] md:h-48 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1594498653385-d5172c532c00?q=80&w=2670&auto=format&fit=crop')`,
+          }}
         >
-          <Plus className="w-5 h-5" />
-          Registrar Evento
-        </button>
-      </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 via-emerald-800/85 to-teal-900/90" />
+          <div className="relative h-full flex flex-col justify-center max-md:px-6 md:px-8 max-md:py-6 md:py-0">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex max-sm:flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+            >
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-green-300/20 rounded-xl backdrop-blur-md">
+                    <Wheat className="max-md:w-6 max-md:h-6 md:w-8 md:h-8 text-green-300" />
+                  </div>
+                  <h1 className="max-md:text-xl md:text-3xl font-bold text-white leading-tight">
+                    Historial de Alimentación
+                  </h1>
+                </div>
+                <p className="text-green-100/90 max-md:text-sm md:text-lg max-w-xl font-medium">
+                  Lleva el registro detallado del consumo de alimentos para optimizar la salud de tu ganado.
+                </p>
+              </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Buscar por producto o animal..."
-          className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-farm-green-500 focus:border-transparent outline-none transition-all"
-        />
-      </div>
+              <div className="flex max-sm:flex-col sm:flex-row gap-3 max-sm:w-full sm:w-auto">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="max-sm:w-full sm:w-auto"
+                >
+                  <button
+                    onClick={() => setViewMode("create")}
+                    className="flex justify-center items-center gap-2 max-sm:w-full sm:w-auto bg-white text-green-800 hover:bg-green-50 shadow-lg font-bold max-sm:py-2.5 sm:py-2 px-6 rounded-xl transition-all"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Registrar Evento
+                  </button>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Search Bar with updated styling */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-farm-green-100"
+      >
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar por producto o animal..."
+            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-farm-green-500 focus:border-transparent outline-none transition-all"
+          />
+        </div>
+      </motion.div>
 
       {/* Loading/Error/List */}
       {loading ? (
@@ -171,3 +216,4 @@ export function FeedingEventsList() {
     </div>
   );
 }
+export default FeedingEventsList;

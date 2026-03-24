@@ -19,11 +19,25 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("auth-storage");
+    console.log("🛠️ [Feeding-MF] Request config:", config.url);
     if (token) {
       try {
         const authData = JSON.parse(token);
         if (authData?.state?.token) {
           config.headers.Authorization = `Bearer ${authData.state.token}`;
+        }
+        const selectedFarm = authData?.state?.selectedFarm;
+        if (selectedFarm && selectedFarm.id) {
+          if (!config.headers["X-Farm-Id"]) {
+            config.headers["X-Farm-Id"] = selectedFarm.id;
+          }
+          if (config.method === "get") {
+            const urlHasFarmId = config.url && config.url.includes("farmId=");
+            const paramsHasFarmId = config.params && config.params.farmId !== undefined;
+            if (!urlHasFarmId && !paramsHasFarmId) {
+              config.params = { ...config.params, farmId: selectedFarm.id };
+            }
+          }
         }
       } catch (error) {
         console.error("Error parsing auth token:", error);

@@ -29,11 +29,13 @@ export function FeedingEventForm({ farmId, onCancel, onSuccess }) {
     try {
       const payload = {
         farmId: Number(farmId),
-        date: new Date(data.date).toISOString(),
-        quantity: Number(data.quantity),
+        supplyDate: new Date(data.date).toISOString(),
+        totalQuantity: Number(data.quantity),
         productId: Number(data.productId),
         animalId: data.targetType === "Animal" ? Number(data.targetId) : null,
         batchId: data.targetType === "Batch" ? Number(data.targetId) : null,
+        animalsFedCount: 1, // Defaulting to 1, or needs to be calculated
+        unitCostAtMoment: 0, // Should be calculated or allowed default
       };
 
       await feedingEventsService.createEvent(payload);
