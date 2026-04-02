@@ -32,8 +32,9 @@ export const feedingService = {
     if (params.pageSize) query.append("pageSize", params.pageSize);
 
     const qs = query.toString();
+    const cleanId = typeof farmId === 'string' ? farmId.split(":")[0] : farmId;
     const response = await apiClient.get(
-      `/v1/feeding-events/farm/${farmId}${qs ? `?${qs}` : ""}`,
+      `/v1/feeding-events/farm/${cleanId}${qs ? `?${qs}` : ""}`,
     );
     return response.data;
   },
@@ -99,6 +100,35 @@ export const feedingService = {
 
   // Alias kept for backwards compatibility
   recordFeeding: async (data) => feedingService.createFeedingEvent(data),
+
+  // ── EXTERNAL SERVICES (Read-Only) ──────────────────────────────────────
+  // Fetch products from Inventory
+  getProducts: async () => {
+    try {
+      const response = await apiClient.get("/v1/Products");
+      return Array.isArray(response.data) ? response.data : (response.data?.data ?? response.data?.items ?? []);
+    } catch {
+      return [];
+    }
+  },
+  // Fetch animals from Herd
+  getAnimals: async () => {
+    try {
+      const response = await apiClient.get("/v1/animals");
+      return Array.isArray(response.data) ? response.data : (response.data?.data ?? response.data?.items ?? []);
+    } catch {
+      return [];
+    }
+  },
+  // Fetch batches (lotes) from Herd
+  getBatches: async () => {
+    try {
+      const response = await apiClient.get("/v1/batches");
+      return Array.isArray(response.data) ? response.data : (response.data?.data ?? response.data?.items ?? []);
+    } catch {
+      return [];
+    }
+  }
 };
 
 export default feedingService;

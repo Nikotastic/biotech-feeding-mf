@@ -28,10 +28,16 @@ export const useFeedingStore = create((set, get) => ({
     try {
       const data = await feedingService.getEventsByFarm(farmId, params);
       // Support both array response and paginated { items: [] } response
-      const events = Array.isArray(data)
+      // Ensure we catch the "feedingEvents" property from the FeedingEventListResponse DTO
+      let parsedEvents = Array.isArray(data)
         ? data
-        : (data?.items ?? data?.data ?? []);
-      set({ events, loading: false });
+        : (data?.feedingEvents ?? data?.data?.feedingEvents ?? data?.items ?? data?.data?.items ?? data?.data ?? []);
+      
+      if (!Array.isArray(parsedEvents)) {
+        parsedEvents = [];
+      }
+      
+      set({ events: parsedEvents, loading: false });
     } catch (err) {
       console.error("Error fetching feeding events:", err);
       set({

@@ -27,10 +27,12 @@ apiClient.interceptors.request.use(
           config.headers.Authorization = `Bearer ${state.token}`;
         }
 
-        // 2. Inject farmId as query param for GET requests.
+        // 2. Inject farmId as header and as query param for GET requests.
         const rawFarmId = state?.selectedFarm?.id;
         if (rawFarmId) {
           const cleanFarmId = typeof rawFarmId === "string" ? rawFarmId.split(":")[0] : rawFarmId;
+
+          config.headers["X-Farm-Id"] = cleanFarmId;
 
           if (config.method === "get") {
             config.params = {
@@ -49,19 +51,27 @@ apiClient.interceptors.request.use(
 );
 
 // Interceptor: handle 401 errors.
-// Only clear the session if there is genuinely NO token in storage.
-// Resource-level 401s (e.g. missing farm context) must NOT log the user out.
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      // 401: Unauthorized.
+      // Check if the token is truly missing or expired.
       try {
-        const parsed = JSON.parse(
-          localStorage.getItem("auth-storage") || "{}",
-        );
-        if (!parsed?.state?.token) {
+        const parsed = JSON.parse(localStorage.getItem("auth-storage") || "{}");
+        const token = parsed?.state?.token;
+
+        if (!token) {
+          // No token at all: clear and redirect.
           localStorage.removeItem("auth-storage");
           window.dispatchEvent(new Event("auth-change"));
+        } else {
+          // Token exists: Could be a context issue (Farm ID) or a backend config issue (IP Whitelist).
+          // We don't force logout here to avoid bad UX if it's a server-side config problem.
+          console.error("[Feeding-MF] 401 Unauthorized - Token exists but request rejected. Check Gateway/Service configuration.", {
+            url: error.config.url,
+            farmId: error.config.headers["X-Farm-Id"]
+          });
         }
       } catch {
         localStorage.removeItem("auth-storage");

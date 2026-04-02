@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Calendar, Search, Trash2, Wheat } from "lucide-react";
+import { Plus, Calendar, Search, Trash2, Wheat, Eye, X } from "lucide-react";
 import alertService from "@shared/utils/alertService";
 import { useAuthStore } from "@shared/store/authStore";
 import { useFeedingStore } from "@shared/store/feedingStore";
+import { feedingService } from "@shared/services/feedingService";
 import { FeedingEventForm } from "./FeedingEventForm";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function FeedingEventsList() {
   const [viewMode, setViewMode] = useState("list");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const farmId = useAuthStore((s) => s.selectedFarm?.id);
   const events = useFeedingStore((s) => s.events);
@@ -17,14 +19,36 @@ export function FeedingEventsList() {
   const fetchEventsByFarm = useFeedingStore((s) => s.fetchEventsByFarm);
   const cancelEventInStore = useFeedingStore((s) => s.cancelEvent);
 
+  const [productsMap, setProductsMap] = useState({});
+  const [animalsMap, setAnimalsMap] = useState({});
+  const [batchesMap, setBatchesMap] = useState({});
+
   useEffect(() => {
     fetchEventsByFarm(farmId);
+    
+    // Load diccionaries for real names
+    feedingService.getProducts().then((p) => {
+      const map = {};
+      p.forEach((i) => map[i.id] = i.name);
+      setProductsMap(map);
+    });
+    feedingService.getAnimals().then((a) => {
+      const map = {};
+      a.forEach((i) => map[i.id] = i.name || i.identifier || i.tagNumber);
+      setAnimalsMap(map);
+    });
+    feedingService.getBatches().then((b) => {
+      const map = {};
+      b.forEach((i) => map[i.id] = i.name);
+      setBatchesMap(map);
+    });
   }, [farmId]);
 
   const filteredEvents = (events ?? []).filter(
     (e) =>
-      e.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      e.animalName?.toLowerCase().includes(searchTerm.toLowerCase()),
+      (e.productName || productsMap[e.productId] || `Producto #${e.productId}`)?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (e.animalName || animalsMap[e.animalId] || `Animal #${e.animalId}`)?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (e.batchName || batchesMap[e.batchId] || `Lote #${e.batchId}`)?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleCreateSuccess = () => {
@@ -178,41 +202,125 @@ export function FeedingEventsList() {
                 </div>
                 <div>
                   <h3 className="font-bold text-gray-900">
-                    {event.productName || "Producto desconocido"}
+                    {event.productName || productsMap[event.productId] || (event.productId ? `Producto #${event.productId}` : "Producto desconocido")}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    {new Date(event.date).toLocaleDateString()} -{" "}
-                    {event.animalName
-                      ? `Animal: ${event.animalName}`
-                      : `Lote: ${event.batchName || "N/A"}`}
+                    {new Date(event.supplyDate || event.date || event.createdAt).toLocaleDateString()} -{" "}
+                    {event.animalName || event.animalId
+                      ? `Animal: ${event.animalName || animalsMap[event.animalId] || `#${event.animalId}`}`
+                      : `Lote: ${event.batchName || batchesMap[event.batchId] || (event.batchId ? `#${event.batchId}` : "N/A")}`}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-6">
                 <div className="text-right">
                   <span className="block font-bold text-lg text-farm-green-700">
-                    {event.quantity} kg
+                    {event.totalQuantity ?? event.quantity ?? 0} kg
                   </span>
                   <span className="text-xs text-gray-400">Cantidad</span>
                 </div>
-                <div className="text-right">
-                  <span className="block font-bold text-lg text-gray-700">
-                    ${event.cost || 0}
-                  </span>
-                  <span className="text-xs text-gray-400">Costo</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setSelectedEvent(event)}
+                    className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all"
+                    title="Ver Detalles"
+                  >
+                    <Eye className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handleCancelEvent(event.id)}
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                    title="Cancelar evento"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => handleCancelEvent(event.id)}
-                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                  title="Cancelar evento"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      {/* VER MAS MODAL */}
+      <AnimatePresence>
+        {selectedEvent && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-3xl shadow-xl w-full max-w-lg overflow-hidden"
+            >
+              <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <Eye className="w-5 h-5 text-farm-green-600" />
+                  Detalles del Evento
+                </h3>
+                <button
+                  onClick={() => setSelectedEvent(null)}
+                  className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wider block mb-1">Producto / Alimento</span>
+                    <span className="font-bold text-gray-900 text-lg">
+                      {selectedEvent.productName || productsMap[selectedEvent.productId] || `Producto #${selectedEvent.productId}`}
+                    </span>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <span className="text-xs text-gray-500 font-medium uppercase tracking-wider block mb-1">Destino</span>
+                    <span className="font-bold text-gray-900 text-lg">
+                      {selectedEvent.animalName || selectedEvent.animalId
+                        ? `Animal: ${selectedEvent.animalName || animalsMap[selectedEvent.animalId] || `#${selectedEvent.animalId}`}`
+                        : `Lote: ${selectedEvent.batchName || batchesMap[selectedEvent.batchId] || `#${selectedEvent.batchId}`}`}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-farm-green-50/50 p-4 rounded-xl">
+                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1">Fecha</span>
+                    <span className="font-medium text-gray-800 text-sm">
+                      {new Date(selectedEvent.supplyDate || selectedEvent.date || selectedEvent.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="bg-farm-green-50/50 p-4 rounded-xl">
+                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1">Total Entregado</span>
+                    <span className="font-bold text-farm-green-700">
+                      {selectedEvent.totalQuantity ?? selectedEvent.quantity ?? 0} kg
+                    </span>
+                  </div>
+                  <div className="bg-farm-green-50/50 p-4 rounded-xl">
+                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1">Animales Alimentados</span>
+                    <span className="font-bold text-gray-800">
+                      {selectedEvent.animalsFedCount ?? 1}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                  <span className="text-xs text-gray-500 font-medium uppercase tracking-wider block mb-2">Observaciones</span>
+                  <p className="text-gray-700 text-sm italic">
+                    {selectedEvent.observations ? `"${selectedEvent.observations}"` : "No se registraron observaciones adicionales para este suministro."}
+                  </p>
+                </div>
+              </div>
+              <div className="p-4 border-t border-gray-100 bg-gray-50 text-right">
+                <button
+                  onClick={() => setSelectedEvent(null)}
+                  className="px-6 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-xl text-sm transition-all shadow-md"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
