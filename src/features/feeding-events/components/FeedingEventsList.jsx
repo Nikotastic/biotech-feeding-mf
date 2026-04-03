@@ -170,8 +170,25 @@ export function FeedingEventsList() {
 
       {/* Loading/Error/List */}
       {loading ? (
-        <div className="flex justify-center p-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-farm-green-600"></div>
+        <div className="space-y-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white p-5 rounded-2xl border border-gray-100 flex justify-between items-center animate-pulse">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 bg-gray-100 rounded-xl" />
+                <div className="space-y-2">
+                  <div className="h-5 w-48 bg-gray-200 rounded" />
+                  <div className="h-4 w-32 bg-gray-100 rounded" />
+                </div>
+              </div>
+              <div className="flex items-center gap-6">
+                <div className="h-8 w-16 bg-gray-100 rounded" />
+                <div className="flex gap-2">
+                  <div className="h-9 w-9 bg-gray-100 rounded-lg" />
+                  <div className="h-9 w-9 bg-gray-100 rounded-lg" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : error ? (
         <div className="bg-red-50 text-red-600 p-4 rounded-xl text-center">
