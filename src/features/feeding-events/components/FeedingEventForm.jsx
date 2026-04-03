@@ -3,10 +3,20 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Save, X, Database, Zap, Activity, Info, Settings } from "lucide-react";
 import { feedingEventsService } from "../services/feedingEventsService";
+import { feedingService } from "@shared/services/feedingService";
 import alertService from "@shared/utils/alertService";
 
 export function FeedingEventForm({ farmId, onCancel, onSuccess }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [animals, setAnimals] = useState([]);
+  const [batches, setBatches] = useState([]);
+
+  React.useEffect(() => {
+    feedingService.getProducts().then(setProducts);
+    feedingService.getAnimals().then(setAnimals);
+    feedingService.getBatches().then(setBatches);
+  }, []);
 
   const {
     register,
@@ -29,11 +39,13 @@ export function FeedingEventForm({ farmId, onCancel, onSuccess }) {
     try {
       const payload = {
         farmId: Number(farmId),
-        date: new Date(data.date).toISOString(),
-        quantity: Number(data.quantity),
+        supplyDate: new Date(data.date).toISOString(),
+        totalQuantity: Number(data.quantity),
         productId: Number(data.productId),
         animalId: data.targetType === "Animal" ? Number(data.targetId) : null,
         batchId: data.targetType === "Batch" ? Number(data.targetId) : null,
+        animalsFedCount: 1, // Defaulting to 1, or needs to be calculated
+        unitCostAtMoment: 0, // Should be calculated or allowed default
       };
 
       await feedingEventsService.createEvent(payload);
@@ -129,23 +141,38 @@ export function FeedingEventForm({ farmId, onCancel, onSuccess }) {
 
               <div>
                 <label className={labelStyles}>
-                  ID{" "}
-                  {watch("targetType") === "Animal" ? "del Animal" : "del Lote"}
+                  {watch("targetType") === "Animal" ? "Seleccione el Animal" : "ID del Lote"}
                 </label>
-                <input
-                  type="number"
-                  {...register("targetId", { required: "ID Requerido" })}
-                  placeholder={`Ingrese ID del ${watch("targetType") === "Animal" ? "Animal" : "Lote"}`}
-                  className={inputStyles}
-                />
+                {watch("targetType") === "Animal" ? (
+                  <select
+                    {...register("targetId", { required: "Animal Requerido" })}
+                    className={inputStyles}
+                  >
+                    <option value="">Seleccione un animal...</option>
+                    {animals.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.name || a.identifier || a.tagNumber || `Animal #${a.id}`}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <select
+                    {...register("targetId", { required: "ID del Lote Requerido" })}
+                    className={inputStyles}
+                  >
+                    <option value="">Seleccione un lote...</option>
+                    {batches.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.name || `Lote #${b.id}`}
+                      </option>
+                    ))}
+                  </select>
+                )}
                 {errors.targetId && (
                   <span className="text-red-500 text-xs mt-1 block">
                     {errors.targetId.message}
                   </span>
                 )}
-                <p className="text-[10px] text-gray-400 font-bold uppercase mt-2">
-                  En el futuro, esto será un buscador interactivo.
-                </p>
               </div>
             </div>
           </div>
@@ -158,13 +185,18 @@ export function FeedingEventForm({ farmId, onCancel, onSuccess }) {
 
             <div className="grid grid-cols-1 gap-6">
               <div>
-                <label className={labelStyles}>ID Producto / Alimento</label>
-                <input
-                  type="number"
+                <label className={labelStyles}>Seleccione Producto / Alimento</label>
+                <select
                   {...register("productId", { required: "Producto requerido" })}
-                  placeholder="ID del Alimento"
                   className={inputStyles}
-                />
+                >
+                  <option value="">Seleccione alimento...</option>
+                  {products.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name || `Producto #${p.id}`}
+                    </option>
+                  ))}
+                </select>
                 {errors.productId && (
                   <span className="text-red-500 text-xs mt-1 block">
                     {errors.productId.message}
